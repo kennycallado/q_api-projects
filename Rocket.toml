@@ -2,7 +2,7 @@
 # :redir @* | !openssl rand -base64 32 | tr -d '\n' | xclip -selection clipboard
 
 [default]
-ident      = "questions_api-base"
+ident      = "questions_api-projects"
 port       = 8000
 udp_port   = 65056
 address    = "0.0.0.0"
@@ -30,4 +30,4 @@ project_url   = "http://localhost:8051/api/v1/project/"
 cron_url      = "http://localhost:8052/api/v1/cron/"
 
 [default.databases.questions]
-url = "postgres://base:base@localhost/base"
+url = "postgres://projects:projects@localhost/projects"

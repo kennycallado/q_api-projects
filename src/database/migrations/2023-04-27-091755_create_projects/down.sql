@@ -1,0 +1,2 @@
+DROP TABLE projects CASCADE;
+DROP PUBLICATION projects_pub;
