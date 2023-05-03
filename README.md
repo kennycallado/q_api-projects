@@ -70,7 +70,10 @@ Acceder al repositorio en github y pulsar **Use this template**, **Create a new 
 1. 
    ``` bash
    git remote add base git@github.com:kennycallado/q_api-base.git
+<<<<<<< HEAD
    git remote set-url base --no-push git@github.com:kennycallado/q_api-base.git
+=======
+>>>>>>> 7e9a26c (Initial commit)
    ```
 1. 
    ``` bash
@@ -82,7 +85,7 @@ Acceder al repositorio en github y pulsar **Use this template**, **Create a new 
    ```
 
    ``` bash
-   git pull base main --allow-unrelated-histories
+   git pull --allow-unrelated-histories
    ```
 
 <!-- quizá mejor si no mantiene la rama
@@ -107,8 +110,6 @@ Algunos ficheros deben ser revisados y actualizados para cada proyecto derivado 
 - [ ] Cargo.toml
   - Nombre del paquete
   - Revisar dependencias
-  - Revisar features
-- [ ] .neoconf.json
   - Revisar features
 - [ ] Containerfile
   - Nombre del paquete desde Cargo.toml

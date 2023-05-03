@@ -1,10 +1,10 @@
 [package]
-name      = "package-name"
-version   = "0.1.7"
+name      = "q-api-projects"
+version   = "0.1.6"
 edition   = "2021"
 
 [features]
-default   = []
+default   = ["db_diesel"]
 
 cron      = ["db_diesel", "tokio-cron-scheduler", "reqwest", "escalon-jobs"]
 db_diesel = ["diesel", "diesel_migrations", "rocket_sync_db_pools", "openssl"]
