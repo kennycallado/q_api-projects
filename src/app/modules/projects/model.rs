@@ -1,5 +1,5 @@
-// use diesel::{deserialize::{FromSqlRow, FromSql}, sql_types::Array};
 use serde::{Deserialize, Serialize};
+
 use crate::database::schema::projects;
 
 #[derive(Debug, Clone, Deserialize, Serialize, Queryable)]
