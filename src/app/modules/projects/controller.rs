@@ -5,7 +5,7 @@ use crate::app::providers::guards::claims::AccessClaims;
 use crate::config::database::Db;
 
 use crate::app::modules::projects::handlers::{create, index, show, update};
-use crate::app::modules::projects::model::{Project, NewProject};
+use crate::app::modules::projects::model::{Project, NewProject, ProjectWithValues};
 
 pub fn routes() -> Vec<rocket::Route> {
     routes![
@@ -15,6 +15,10 @@ pub fn routes() -> Vec<rocket::Route> {
         get_index_none,
         get_show,
         get_show_none,
+        get_show_values,
+        get_show_values_none,
+        get_show_user_values,
+        get_show_user_values_none,
         post_create,
         post_create_none,
         put_update,
@@ -51,7 +55,7 @@ pub async fn get_index_none() -> Status {
     Status::Unauthorized
 }
 
-#[get("/<id>", rank = 1)]
+#[get("/<id>", rank = 101)]
 pub async fn get_show(db: Db, claims: AccessClaims, id: i32) -> Result<Json<Project>, Status> {
     match claims.0.user.role.name.as_str() {
         "admin" => show::get_show_admin(&db, claims.0.user, id).await ,
@@ -65,8 +69,46 @@ pub async fn get_show(db: Db, claims: AccessClaims, id: i32) -> Result<Json<Proj
     }
 }
 
-#[get("/<_id>", rank = 2)]
+#[get("/<_id>", rank = 102)]
 pub async fn get_show_none(_id: i32) -> Status {
+    Status::Unauthorized
+}
+
+#[get("/<id>/user/<user_id>/values", rank = 1)]
+pub async fn get_show_user_values(db: Db, claims: AccessClaims, id: i32, user_id: i32) -> Result<Json<ProjectWithValues>, Status> {
+    match claims.0.user.role.name.as_str() {
+        "admin" => show::get_show_user_values_admin(&db, claims.0.user, id, user_id).await,
+        _       => {
+            println!(
+                "Error: get_index; Role not handled {}",
+                claims.0.user.role.name
+            );
+            Err(Status::BadRequest)
+        }
+    }
+}
+
+#[get("/<_id>/user/<_user_id>/values", rank = 2)]
+pub async fn get_show_user_values_none(_id: i32, _user_id: i32) -> Status {
+    Status::Unauthorized
+}
+
+#[get("/<id>/values", rank = 1)]
+pub async fn get_show_values(db: Db, claims: AccessClaims, id: i32) -> Result<Json<ProjectWithValues>, Status> {
+    match claims.0.user.role.name.as_str() {
+        "admin" => show::get_show_values_admin(&db, claims.0.user, id).await,
+        _       => {
+            println!(
+                "Error: get_index; Role not handled {}",
+                claims.0.user.role.name
+            );
+            Err(Status::BadRequest)
+        }
+    }
+}
+
+#[get("/<_id>/values", rank = 2)]
+pub async fn get_show_values_none(_id: i32) -> Status {
     Status::Unauthorized
 }
 
@@ -106,7 +148,6 @@ pub async fn put_update(db: Db, claims: AccessClaims, id: i32, new_project: Json
             Err(Status::BadRequest)
         }
     }
-    // update::put_update_admin(&db, id, new_project.into_inner()).await
 }
 
 #[put("/<_id>", data = "<_new_project>", rank = 2)]
