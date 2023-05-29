@@ -1,30 +1,29 @@
 use serde::{Deserialize, Serialize};
 
-use crate::database::schema::project_values;
-
+use crate::database::schema::project_records;
 
 #[derive(Debug, Clone, Deserialize, Serialize, Queryable, Identifiable)]
-#[diesel(table_name = project_values)]
+#[diesel(table_name = project_records)]
 #[serde(crate = "rocket::serde")]
-pub struct ProjectValue {
+pub struct ProjectRecord {
     pub id: i32,
     pub project_id: i32,
-    pub values_id: i32,
+    pub records_id: i32,
 }
 
 #[derive(Debug, Clone, Deserialize, Serialize, Insertable, AsChangeset)]
-#[diesel(table_name = project_values)]
+#[diesel(table_name = project_records)]
 #[serde(crate = "rocket::serde")]
-pub struct NewProjectValue {
+pub struct NewProjectRecord {
     pub project_id: i32,
-    pub values_id: i32,
+    pub record_id: i32,
 }
 
-impl From<ProjectValue> for NewProjectValue {
-    fn from(value: ProjectValue) -> Self {
+impl From<ProjectRecord> for NewProjectRecord {
+    fn from(value: ProjectRecord) -> Self {
         Self {
             project_id: value.project_id,
-            values_id: value.values_id,
+            record_id: value.records_id,
         }
     }
 }

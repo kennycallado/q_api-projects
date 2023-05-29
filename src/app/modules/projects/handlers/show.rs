@@ -4,10 +4,12 @@ use rocket::serde::json::Json;
 use crate::app::providers::interfaces::helpers::claims::UserInClaims;
 use crate::config::database::Db;
 
-use crate::app::modules::project_values::services::repository as pv_repository;
-use crate::app::modules::values::services::repository as values_repository;
+use crate::app::modules::project_records::services::repository as pr_repository;
+use crate::app::modules::records::services::repository as records_repository;
 
-use crate::app::modules::projects::model::{Project, ProjectWithValues};
+// use crate::app::modules::projects::model::{Project, ProjectWithRecords, ProjectWithValuesAndUser};
+
+use crate::app::modules::projects::model::Project;
 use crate::app::modules::projects::services::repository as projects_repository;
 
 pub async fn get_show_admin(db: &Db, _admin: UserInClaims, id: i32) -> Result<Json<Project>, Status> {
@@ -19,59 +21,72 @@ pub async fn get_show_admin(db: &Db, _admin: UserInClaims, id: i32) -> Result<Js
     }
 }
 
-pub async fn get_show_values_admin(db: &Db, _admin: UserInClaims, id: i32) -> Result<Json<ProjectWithValues>, Status> {
-    let project = projects_repository::get_by_id(&db, id).await;
-    if let Err(_) = project {
-        return Err(Status::InternalServerError);
-    }
-    let project = project.unwrap();
-    
-    let project_values = pv_repository::get_by_project_id(&db, id).await;
-    if let Err(_) = project_values {
-        return Err(Status::InternalServerError);
-    }
-    let project_values = project_values.unwrap();
+// pub async fn get_show_values_admin(db: &Db, _admin: UserInClaims, id: i32) -> Result<Json<ProjectWithValues>, Status> {
+//     let project = projects_repository::get_by_id(&db, id).await;
+//     if let Err(_) = project {
+//         return Err(Status::InternalServerError);
+//     }
+//     let project = project.unwrap();
+//     
+//     let project_values = pv_repository::get_by_project_id(&db, id).await;
+//     if let Err(_) = project_values {
+//         return Err(Status::InternalServerError);
+//     }
+//     let project_values = project_values.unwrap();
 
-    let mut values = vec![];
-    for pv in project_values {
-        let value = values_repository::get_by_id(&db, pv.values_id).await;
-        if let Err(_) = value {
-            return Err(Status::InternalServerError);
-        }
-        let value = value.unwrap();
+//     let mut values = vec![];
+//     for pv in project_values {
+//         let value = values_repository::get_by_id(&db, pv.values_id).await;
+//         if let Err(_) = value {
+//             return Err(Status::InternalServerError);
+//         }
+//         let value = value.unwrap();
 
-        values.push(value);
-    }
+//         values.push(value);
+//     }
 
-    let project = ProjectWithValues {
-        id: project.id,
-        name: project.name,
-        keys: project.keys,
-        values: Some(values),
-    };
+//     let project = ProjectWithValues {
+//         id: project.id,
+//         name: project.name,
+//         keys: project.keys,
+//         values: Some(values),
+//     };
 
-    Ok(Json(project))
-}
+//     Ok(Json(project))
+// }
 
-pub async fn get_show_user_values_admin(db: &Db, _admin: UserInClaims, id: i32, user_id: i32) -> Result<Json<ProjectWithValues>, Status> {
-    let project = projects_repository::get_by_id(&db, id).await;
-    if let Err(_) = project {
-        return Err(Status::InternalServerError);
-    }
-    let project = project.unwrap();
-    
-    let values = values_repository::get_all_by_user_id(&db, user_id).await;
-    if let Err(_) = values {
-        return Err(Status::InternalServerError);
-    }
-    let values = values.unwrap();
+// pub async fn get_show_user_values_admin(db: &Db, _admin: UserInClaims, id: i32, user_id: i32) -> Result<Json<ProjectWithValuesAndUser>, Status> {
+//     // get the project
+//     let project = projects_repository::get_by_id(&db, id).await;
+//     if let Err(_) = project {
+//         return Err(Status::InternalServerError);
+//     }
+//     let project = project.unwrap();
 
-    let project = ProjectWithValues {
-        id: project.id,
-        name: project.name,
-        keys: project.keys,
-        values: Some(values),
-    };
+//     // get the pv by user_id (relation between project and values)
+//     let project_values = pv_repository::get_by_user_id(&db, user_id).await;
+//     if let Err(_) = project_values {
+//         return Err(Status::InternalServerError);
+//     }
+//     let project_values = project_values.unwrap();
 
-    Ok(Json(project))
-}
+//     // collect the values ids
+//     let values_ids: Vec<i32> = project_values.iter().map(|pv| pv.values_id).collect();
+
+//     // get the values
+//     let values = values_repository::get_by_ids(&db, values_ids).await;
+//     if let Err(_) = values {
+//         return Err(Status::InternalServerError);
+//     }
+//     let values = values.unwrap();
+//     
+//     let project = ProjectWithValuesAndUser {
+//         id: project.id,
+//         user_id,
+//         name: project.name,
+//         keys: project.keys,
+//         values: Some(values),
+//     };
+
+//     Ok(Json(project))
+// }
