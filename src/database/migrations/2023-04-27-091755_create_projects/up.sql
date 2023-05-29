@@ -7,7 +7,7 @@ ALTER TABLE projects
 
 
 INSERT INTO projects (name, keys) VALUES
-  ('Project 1', '{strength, courage, mood}'),
+  ('Project 1', '{step, mood}'),
   ('Project 2', default)
   ;
 
