@@ -45,13 +45,13 @@ GET http://localhost:8000/api/v1/project/1
 Accept: application/json
 Authorization: Bearer 
 
-GET http://localhost:8000/api/v1/project/1/values
-Accept: application/json
-Authorization: Bearer 
+#GET http://localhost:8000/api/v1/project/1/record
+#Accept: application/json
+#Authorization: Bearer 
 
-GET http://localhost:8000/api/v1/project/1/user/1/values
-Accept: application/json
-Authorization: Bearer 
+#GET http://localhost:8000/api/v1/project/1/user/1/record
+#Accept: application/json
+#Authorization: Bearer 
 
 POST http://localhost:8000/api/v1/project
 Accept: application/json
