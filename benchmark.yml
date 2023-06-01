@@ -72,6 +72,22 @@ plan:
         Authorization: Bearer {{ TOKEN }}
     tags: [ show ]
 
+  - name: Get Show records
+    request:
+      url: '/api/v1/project/{{ iteration }}/record'
+      headers:
+        Accept: application/json
+        Authorization: Bearer {{ TOKEN }}
+    tags: [ show-record ]
+
+  - name: Get Show user
+    request:
+      url: '/api/v1/project/{{ iteration }}/user/1'
+      headers:
+        Accept: application/json
+        Authorization: Bearer {{ TOKEN }}
+    tags: [ show-user ]
+
   - name: Put Show
     request:
       method: PUT
@@ -82,4 +98,15 @@ plan:
         Content-Type: application/json
       body: '{ "name": "Project {{ iteration }}", "keys": ["step"] }'
     tags: [ put ]
+
+  - name: Post record
+    request:
+      method: POST
+      url: '/api/v1/project/1/record'
+      headers:
+        Accept: application/json
+        Authorization: Bearer {{ TOKEN }}
+        Content-Type: application/json
+      body: '{ "user_id": 1, "record": { "step": {{ iteration }}, "mood": {{ iteration }} } }'
+    tags: [ post-record ]
 ---
