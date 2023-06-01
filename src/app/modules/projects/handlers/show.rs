@@ -54,6 +54,38 @@ pub async fn get_show_records_admin(db: &Db, _admin: UserInClaims, id: i32) -> R
     }
 }
 
+pub async fn get_show_user_admin(db: &Db, _admin: UserInClaims, project_id: i32, user_id: i32) -> Result<Json<Vec<Record>>, Status> {
+    let project = projects_repository::get_by_id(&db, project_id).await;
+
+    match project {
+        Ok(_) => { 
+            let pr = pr_repository::get_by_project_id(&db, project_id).await;
+
+            let records: Option<Vec<Record>> = match pr {
+                Ok(project_records) => {
+                    let ids = project_records.iter().map(|pr| pr.records_id).collect::<Vec<i32>>();
+                    let record = records_repository::get_by_multiple_ids(&db, ids).await;
+
+                    match record {
+                        Ok(records) => Some(records),
+                        Err(_) => return Err(Status::InternalServerError),
+                    }
+                },
+                Err(_) => None,
+            };
+
+            match records {
+                Some(records) => {
+                    let records = records.into_iter().filter(|r| r.user_id == user_id).collect::<Vec<Record>>();
+                    Ok(Json(records))
+                },
+                None => Ok(Json(vec![])),
+            }
+        },
+        Err(_) => Err(Status::InternalServerError),
+    }
+}
+
 // pub async fn get_show_values_admin(db: &Db, _admin: UserInClaims, id: i32) -> Result<Json<ProjectWithValues>, Status> {
 //     let project = projects_repository::get_by_id(&db, id).await;
 //     if let Err(_) = project {
