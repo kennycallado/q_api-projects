@@ -18,8 +18,8 @@ pub fn routes() -> Vec<rocket::Route> {
         get_show_none,
         get_show_record,
         get_show_record_none,
-        // get_show_user_records,
-        // get_show_user_records_none,
+        get_show_user,
+        get_show_user_none,
         post_create,
         post_create_none,
         post_create_record,
@@ -97,29 +97,24 @@ pub async fn get_show_record_none(_id: i32) -> Status {
     Status::Unauthorized
 }
 
-// #[get("/<_id>/user/<_user_id>/records", rank = 2)]
-// pub async fn get_show_user_records_none(_id: i32, _user_id: i32) -> Status {
-//     Status::Unauthorized
-// }
+#[get("/<id>/user/<user_id>", rank = 101)]
+pub async fn get_show_user(db: Db, claims: AccessClaims, id: i32, user_id: i32) -> Result<Json<Vec<Record>>, Status> {
+    match claims.0.user.role.name.as_str() {
+        "admin" => show::get_show_user_admin(&db, claims.0.user, id, user_id).await,
+        _       => {
+            println!(
+                "Error: get_show_user; Role not handled {}",
+                claims.0.user.role.name
+            );
+            Err(Status::BadRequest)
+        }
+    }
+}
 
-// #[get("/<id>/records", rank = 1)]
-// pub async fn get_show_records(db: Db, claims: AccessClaims, id: i32) -> Result<Json<ProjectWithValues>, Status> {
-//     match claims.0.user.role.name.as_str() {
-//         "admin" => show::get_show_records_admin(&db, claims.0.user, id).await,
-//         _       => {
-//             println!(
-//                 "Error: get_index; Role not handled {}",
-//                 claims.0.user.role.name
-//             );
-//             Err(Status::BadRequest)
-//         }
-//     }
-// }
-
-// #[get("/<_id>/records", rank = 2)]
-// pub async fn get_show_records_none(_id: i32) -> Status {
-//     Status::Unauthorized
-// }
+#[get("/<_id>/user/<_user_id>", rank = 102)]
+pub async fn get_show_user_none(_id: i32, _user_id: i32) -> Status {
+    Status::Unauthorized
+}
 
 #[post("/", data = "<new_project>", rank = 1)]
 pub async fn post_create(db: Db, claims: AccessClaims, new_project: Json<NewProject>) -> Result<Json<Project>, Status> {
