@@ -6,13 +6,22 @@ use crate::config::database::Db;
 use crate::app::providers::interfaces::helpers::claims::UserInClaims;
 
 use crate::app::modules::records::model::Record;
-use crate::app::modules::projects::model::ProjectWithRecords;
+use crate::app::modules::projects::model::{ProjectWithRecords, Project};
 
 use crate::app::modules::project_records::services::repository as pr_repository;
 use crate::app::modules::records::services::repository as records_repository;
 use crate::app::modules::projects::services::repository as projects_repository;
 
-pub async fn get_show_admin(db: &Db, _admin: UserInClaims, id: i32) -> Result<Json<ProjectWithRecords>, Status> {
+pub async fn get_show_admin(db: &Db, _admin: UserInClaims, id: i32) -> Result<Json<Project>, Status> {
+    let project = projects_repository::get_by_id(&db, id).await;
+
+    match project {
+        Ok(project) => Ok(Json(project)),
+        Err(_) => Err(Status::InternalServerError),
+    }
+}
+
+pub async fn get_show_records_admin(db: &Db, _admin: UserInClaims, id: i32) -> Result<Json<ProjectWithRecords>, Status> {
     let project = projects_repository::get_by_id(&db, id).await;
 
     match project {

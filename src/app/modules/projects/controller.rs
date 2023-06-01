@@ -16,8 +16,8 @@ pub fn routes() -> Vec<rocket::Route> {
         get_index_none,
         get_show,
         get_show_none,
-        // get_show_records,
-        // get_show_records_none,
+        get_show_record,
+        get_show_record_none,
         // get_show_user_records,
         // get_show_user_records_none,
         post_create,
@@ -59,7 +59,7 @@ pub async fn get_index_none() -> Status {
 }
 
 #[get("/<id>", rank = 101)]
-pub async fn get_show(db: Db, claims: AccessClaims, id: i32) -> Result<Json<ProjectWithRecords>, Status> {
+pub async fn get_show(db: Db, claims: AccessClaims, id: i32) -> Result<Json<Project>, Status> {
     match claims.0.user.role.name.as_str() {
         "admin" => show::get_show_admin(&db, claims.0.user, id).await ,
         _       => {
@@ -77,19 +77,25 @@ pub async fn get_show_none(_id: i32) -> Status {
     Status::Unauthorized
 }
 
-// #[get("/<id>/user/<user_id>/records", rank = 1)]
-// pub async fn get_show_user_records(db: Db, claims: AccessClaims, id: i32, user_id: i32) -> Result<Json<ProjectWithValuesAndUser>, Status> {
-//     match claims.0.user.role.name.as_str() {
-//         "admin" => show::get_show_user_records_admin(&db, claims.0.user, id, user_id).await,
-//         _       => {
-//             println!(
-//                 "Error: get_index; Role not handled {}",
-//                 claims.0.user.role.name
-//             );
-//             Err(Status::BadRequest)
-//         }
-//     }
-// }
+#[get("/<id>/record", rank = 1)]
+pub async fn get_show_record(db: Db, claims: AccessClaims, id: i32) -> Result<Json<ProjectWithRecords>, Status> {
+    match claims.0.user.role.name.as_str() {
+        "admin" => show::get_show_records_admin(&db, claims.0.user, id).await,
+        "robot" => show::get_show_records_admin(&db, claims.0.user, id).await,
+        _       => {
+            println!(
+                "Error: get_show_records; Role not handled {}",
+                claims.0.user.role.name
+            );
+            Err(Status::BadRequest)
+        }
+    }
+}
+
+#[get("/<_id>/record", rank = 2)]
+pub async fn get_show_record_none(_id: i32) -> Status {
+    Status::Unauthorized
+}
 
 // #[get("/<_id>/user/<_user_id>/records", rank = 2)]
 // pub async fn get_show_user_records_none(_id: i32, _user_id: i32) -> Status {
