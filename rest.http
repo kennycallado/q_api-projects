@@ -41,13 +41,13 @@ GET http://localhost:8000/api/v1/project/1
 Accept: application/json
 Authorization: Bearer 
 
-#GET http://localhost:8000/api/v1/project/1/record
-#Accept: application/json
-#Authorization: Bearer 
+GET http://localhost:8000/api/v1/project/1/record
+Accept: application/json
+Authorization: Bearer 
 
-#GET http://localhost:8000/api/v1/project/1/user/1/record
-#Accept: application/json
-#Authorization: Bearer 
+GET http://localhost:8000/api/v1/project/1/user/1
+Accept: application/json
+Authorization: Bearer 
 
 POST http://localhost:8000/api/v1/project
 Accept: application/json
@@ -59,9 +59,19 @@ Content-Type: application/json
     "keys": []
 }
 
-GET http://localhost:8000/api/v1/project/3
+GET http://localhost:8000/api/v1/project/1
 Accept: application/json
 Authorization: Bearer 
+
+POST http://localhost:8000/api/v1/project/1/record
+Accept: application/json
+Authorization: Bearer 
+Content-Type: application/json
+
+{
+  "user_id": 1,
+  "record": { "step": 1, "mood": 65 }
+}
 
 PUT http://localhost:8000/api/v1/project/3
 Accept: application/json
