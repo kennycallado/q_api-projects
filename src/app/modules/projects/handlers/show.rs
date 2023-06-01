@@ -1,22 +1,46 @@
 use rocket::http::Status;
 use rocket::serde::json::Json;
 
-use crate::app::providers::interfaces::helpers::claims::UserInClaims;
 use crate::config::database::Db;
+
+use crate::app::providers::interfaces::helpers::claims::UserInClaims;
+
+use crate::app::modules::records::model::Record;
+use crate::app::modules::projects::model::ProjectWithRecords;
 
 use crate::app::modules::project_records::services::repository as pr_repository;
 use crate::app::modules::records::services::repository as records_repository;
-
-// use crate::app::modules::projects::model::{Project, ProjectWithRecords, ProjectWithValuesAndUser};
-
-use crate::app::modules::projects::model::Project;
 use crate::app::modules::projects::services::repository as projects_repository;
 
-pub async fn get_show_admin(db: &Db, _admin: UserInClaims, id: i32) -> Result<Json<Project>, Status> {
+pub async fn get_show_admin(db: &Db, _admin: UserInClaims, id: i32) -> Result<Json<ProjectWithRecords>, Status> {
     let project = projects_repository::get_by_id(&db, id).await;
 
     match project {
-        Ok(project) => Ok(Json(project)),
+        Ok(project) => { 
+            let pr = pr_repository::get_by_project_id(&db, id).await;
+
+            let records: Option<Vec<Record>> = match pr {
+                Ok(project_records) => {
+                    let ids = project_records.iter().map(|pr| pr.records_id).collect::<Vec<i32>>();
+                    let record = records_repository::get_by_multiple_ids(&db, ids).await;
+
+                    match record {
+                        Ok(records) => Some(records),
+                        Err(_) => return Err(Status::InternalServerError),
+                    }
+                },
+                Err(_) => None,
+            };
+
+            let project = ProjectWithRecords {
+                id: project.id,
+                name: project.name,
+                keys: project.keys,
+                records,
+            };
+
+            Ok(Json(project))
+        },
         Err(_) => Err(Status::InternalServerError),
     }
 }

@@ -24,6 +24,16 @@ pub async fn get_by_id(db: &Db, id: i32) -> Result<Record, diesel::result::Error
     record
 }
 
+pub async fn get_by_multiple_ids(db: &Db, ids: Vec<i32>) -> Result<Vec<Record>, diesel::result::Error> {
+    let records = db.run(move |conn| {
+        records::table
+            .filter(records::id.eq_any(ids))
+            .load::<Record>(conn)
+    }).await;
+
+    records
+}
+
 pub async fn get_all_by_user_id(db: &Db, user_id: i32) -> Result<Vec<Record>, diesel::result::Error> {
     let records = db.run(move |conn| {
         records::table
