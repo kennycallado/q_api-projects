@@ -1,13 +1,12 @@
 use rocket::http::Status;
 use rocket::serde::json::Json;
 
+use crate::app::modules::records::model::{NewRecord, Record};
 use crate::app::providers::guards::claims::AccessClaims;
 use crate::config::database::Db;
 
 use crate::app::modules::projects::handlers::{create, index, show, update};
-use crate::app::modules::projects::model::{Project, NewProject,
-    // ProjectWithValues, ProjectWithValuesAndUser
-};
+use crate::app::modules::projects::model::{Project, NewProject, ProjectWithRecords};
 
 pub fn routes() -> Vec<rocket::Route> {
     routes![
@@ -23,6 +22,8 @@ pub fn routes() -> Vec<rocket::Route> {
         // get_show_user_records_none,
         post_create,
         post_create_none,
+        post_create_record,
+        post_create_record_none,
         put_update,
         put_update_none,
     ]
@@ -58,7 +59,7 @@ pub async fn get_index_none() -> Status {
 }
 
 #[get("/<id>", rank = 101)]
-pub async fn get_show(db: Db, claims: AccessClaims, id: i32) -> Result<Json<Project>, Status> {
+pub async fn get_show(db: Db, claims: AccessClaims, id: i32) -> Result<Json<ProjectWithRecords>, Status> {
     match claims.0.user.role.name.as_str() {
         "admin" => show::get_show_admin(&db, claims.0.user, id).await ,
         _       => {
@@ -114,7 +115,7 @@ pub async fn get_show_none(_id: i32) -> Status {
 //     Status::Unauthorized
 // }
 
-#[post("/", data = "<new_project>",rank = 1)]
+#[post("/", data = "<new_project>", rank = 1)]
 pub async fn post_create(db: Db, claims: AccessClaims, new_project: Json<NewProject>) -> Result<Json<Project>, Status> {
     match claims.0.user.role.name.as_str() {
         "admin" => create::post_create_admin(&db, claims.0.user, new_project.into_inner()).await,
@@ -131,8 +132,28 @@ pub async fn post_create(db: Db, claims: AccessClaims, new_project: Json<NewProj
     // create::post_create_admin(&db, new_project.into_inner()).await
 }
 
-#[post("/", data = "<_new_project>",rank = 2)]
+#[post("/", data = "<_new_project>", rank = 2)]
 pub async fn post_create_none(_new_project: Json<NewProject>) -> Status {
+    Status::Unauthorized
+}
+
+#[post("/<id>/record", data = "<new_record>", rank = 1)]
+pub async fn post_create_record(db: Db, claims: AccessClaims, id: i32, new_record: Json<NewRecord>) -> Result<Json<Record>, Status> {
+    match claims.0.user.role.name.as_str() {
+        "admin" => create::post_add_record_admin(&db, claims.0.user, id, new_record.into_inner()).await,
+        "robot" => create::post_add_record_admin(&db, claims.0.user, id, new_record.into_inner()).await,
+        _ => {
+            println!(
+                "Error: post_create_record; Role not handled {}",
+                claims.0.user.role.name
+            );
+            Err(Status::BadRequest)
+        }
+    }
+}
+
+#[post("/<_id>/record", data = "<_new_record>", rank = 2)]
+pub async fn post_create_record_none(_id: i32, _new_record: Json<NewRecord>) -> Status {
     Status::Unauthorized
 }
 
