@@ -21,6 +21,32 @@ pub async fn get_show_admin(db: &Db, _admin: UserInClaims, id: i32) -> Result<Js
     }
 }
 
+pub async fn get_show_last_records_admin(db: &Db, _admin: UserInClaims, id: i32) -> Result<Json<ProjectWithRecords>, Status> {
+    let project = projects_repository::get_by_id(&db, id).await;
+
+    match project {
+        Ok(project) => {
+            let records = records_repository::get_last_of_every_user(&db).await;
+            
+            let records = match records {
+                Ok(records) => Some(records),
+                Err(_) => None
+
+            };
+
+            let project = ProjectWithRecords {
+                id: project.id,
+                name: project.name,
+                keys: project.keys,
+                records,
+            };
+
+            Ok(Json(project))
+        },
+        Err(_) => return Err(Status::InternalServerError),
+    }
+}
+
 pub async fn get_show_records_admin(db: &Db, _admin: UserInClaims, id: i32) -> Result<Json<ProjectWithRecords>, Status> {
     let project = projects_repository::get_by_id(&db, id).await;
 

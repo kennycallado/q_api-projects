@@ -18,6 +18,7 @@ pub fn routes() -> Vec<rocket::Route> {
         get_show_none,
         get_show_record,
         get_show_record_none,
+        get_show_records_last,
         get_show_user,
         get_show_user_none,
         post_create,
@@ -95,6 +96,21 @@ pub async fn get_show_record(db: Db, claims: AccessClaims, id: i32) -> Result<Js
 #[get("/<_id>/record", rank = 2)]
 pub async fn get_show_record_none(_id: i32) -> Status {
     Status::Unauthorized
+}
+
+#[get("/<id>/record/lasts", rank = 1)]
+pub async fn get_show_records_last(db: Db, claims: AccessClaims, id: i32) -> Result<Json<ProjectWithRecords>, Status> {
+    match claims.0.user.role.name.as_str() {
+        "admin" => show::get_show_last_records_admin(&db, claims.0.user, id).await,
+        "robot" => show::get_show_last_records_admin(&db, claims.0.user, id).await,
+        _ => {
+            println!(
+                "Error: get_show_records_last; Role not handled {}",
+                claims.0.user.role.name
+            );
+            Err(Status::BadRequest)
+        }
+    }
 }
 
 #[get("/<id>/user/<user_id>", rank = 101)]
