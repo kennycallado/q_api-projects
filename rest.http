@@ -45,7 +45,15 @@ GET http://localhost:8000/api/v1/project/1/record
 Accept: application/json
 Authorization: Bearer 
 
+GET http://localhost:8000/api/v1/project/1/record/lasts
+Accept: application/json
+Authorization: Bearer 
+
 GET http://localhost:8000/api/v1/project/1/user/1
+Accept: application/json
+Authorization: Bearer 
+
+GET http://localhost:8000/api/v1/project/1/user/1/new
 Accept: application/json
 Authorization: Bearer 
 
