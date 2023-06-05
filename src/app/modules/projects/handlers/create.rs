@@ -8,8 +8,8 @@ use crate::app::providers::interfaces::helpers::claims::UserInClaims;
 use crate::config::database::Db;
 
 use crate::app::modules::projects::model::{Project, NewProject};
-use crate::app::modules::projects::services::repository as projects_repository;
 
+use crate::app::modules::projects::services::repository as projects_repository;
 use crate::app::modules::records::services::repository as records_repository;
 use crate::app::modules::project_records::services::repository as pr_repository;
 
@@ -18,6 +18,43 @@ pub async fn post_create_admin(db: &Db, _admin: UserInClaims, new_project: NewPr
 
     match project {
         Ok(project) => Ok(Json(project)),
+        Err(_) => Err(Status::InternalServerError),
+    }
+}
+
+pub async fn get_show_user_new_admin(db: &Db, _admin: UserInClaims, project_id: i32, user_id: i32) -> Result<Json<Project>, Status> {
+    let project = projects_repository::get_by_id(&db, project_id).await;
+
+    // check that there is no record for this user in this project
+    match records_repository::get_last_by_user_id(&db, user_id).await {
+        Ok(_) => return Err(Status::Conflict),
+        Err(_) => {},
+    }
+
+    match project {
+        Ok(project) => {
+            let new_record = NewRecord {
+                user_id,
+                record: rocket::serde::json::Value::String("{}".to_string()),
+            };
+
+            match records_repository::create(&db, new_record).await {
+                Ok(record) => {
+                    let new_project_record = NewProjectRecord {
+                        project_id,
+                        record_id: record.id,
+                    };
+
+                    match pr_repository::create(&db, new_project_record).await {
+                        Ok(_) => {
+                            Ok(Json(project))
+                        },
+                        Err(_) => Err(Status::InternalServerError),
+                    }
+                },
+                Err(_) => Err(Status::InternalServerError),
+            }
+        },
         Err(_) => Err(Status::InternalServerError),
     }
 }
