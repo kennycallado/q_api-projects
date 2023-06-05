@@ -56,6 +56,17 @@ pub async fn get_last_by_user_id(db: &Db, user_id: i32) -> Result<Record, diesel
     record
 }
 
+pub async fn get_last_of_every_user(db: &Db) -> Result<Vec<Record>, diesel::result::Error> {
+    let records = db.run(move |conn| {
+        records::table
+            .distinct_on(records::user_id)
+            .order((records::user_id, records::id.desc()))
+            .load::<Record>(conn)
+    }).await;
+
+    records
+}
+
 pub async fn create(db: &Db, new_record: NewRecord) -> Result<Record, diesel::result::Error> {
     let record = db.run(move |conn| {
         diesel::insert_into(records::table)
