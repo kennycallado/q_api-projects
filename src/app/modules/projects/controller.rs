@@ -138,6 +138,7 @@ pub async fn get_show_user_none(_id: i32, _user_id: i32) -> Status {
 pub async fn get_show_user_new(db: Db, claims: AccessClaims, project_id: i32, user_id: i32) -> Result<Json<Project>, Status> {
     match claims.0.user.role.name.as_str() {
         "admin" => create::get_show_user_new_admin(&db, claims.0.user, project_id, user_id).await,
+        "robot" => create::get_show_user_new_admin(&db, claims.0.user, project_id, user_id).await,
         _       => {
             println!(
                 "Error: get_show_user_new; Role not handled {}",
