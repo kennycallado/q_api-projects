@@ -6,8 +6,5 @@ ALTER TABLE records
   ADD COLUMN record JSONB NOT NULL;
 
 INSERT INTO records (user_id, record) VALUES
-  (1, '{"step": 1, "mood": 50}'),
-  (2, '{"step": 1, "mood": 10}'),
-  (1, '{"step": 2, "mood": 60}'),
-  (1, '{"step": 3, "mood": 65}')
+  (1, '{"step": 0, "mood": 0}')
   ;

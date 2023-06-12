@@ -10,8 +10,5 @@ ALTER TABLE project_records
   ADD CONSTRAINT fk_pv_record_id  FOREIGN KEY (record_id) REFERENCES records (id);
 
 INSERT INTO project_records (project_id, record_id) VALUES
-  (1, 1),
-  (1, 2),
-  (1, 3),
-  (1, 4)
+  (1, 1)
   ;
