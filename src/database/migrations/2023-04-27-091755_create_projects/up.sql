@@ -7,8 +7,7 @@ ALTER TABLE projects
 
 
 INSERT INTO projects (name, keys) VALUES
-  ('Project 1', '{step, mood}'),
-  ('Project 2', default)
+  ('Project X', '{step, mood}')
   ;
 
 ALTER TABLE projects REPLICA IDENTITY FULL;
