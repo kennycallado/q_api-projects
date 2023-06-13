@@ -1,9 +1,10 @@
 use rocket::http::Status;
 use rocket::serde::json::Json;
 
+use crate::database::connection::Db;
+
 use crate::app::modules::records::model::{NewRecord, Record};
 use crate::app::providers::guards::claims::AccessClaims;
-use crate::config::database::Db;
 
 use crate::app::modules::projects::handlers::{create, index, show, update};
 use crate::app::modules::projects::model::{Project, NewProject, ProjectWithRecords};

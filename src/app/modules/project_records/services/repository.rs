@@ -1,8 +1,7 @@
 use diesel::prelude::*;
 
-use crate::config::database::Db;
+use crate::database::connection::Db;
 use crate::database::schema::project_records;
-// use crate::database::schema::records;
 
 use crate::app::modules::project_records::model::{ProjectRecord, NewProjectRecord};
 
