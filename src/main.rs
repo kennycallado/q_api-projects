@@ -1,5 +1,4 @@
 mod app;
-mod config;
 mod database;
 
 #[cfg(test)]
