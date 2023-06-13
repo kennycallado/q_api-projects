@@ -27,8 +27,4 @@ diesel::table! {
 diesel::joinable!(project_records -> projects (project_id));
 diesel::joinable!(project_records -> records (record_id));
 
-diesel::allow_tables_to_appear_in_same_query!(
-    project_records,
-    projects,
-    records,
-);
+diesel::allow_tables_to_appear_in_same_query!(project_records, projects, records,);
