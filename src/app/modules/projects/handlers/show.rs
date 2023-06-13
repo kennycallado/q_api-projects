@@ -1,9 +1,9 @@
 use rocket::http::Status;
 use rocket::serde::json::Json;
 
-use crate::config::database::Db;
+use crate::database::connection::Db;
 
-use crate::app::providers::interfaces::helpers::claims::UserInClaims;
+use crate::app::providers::services::claims::UserInClaims;
 
 use crate::app::modules::records::model::Record;
 use crate::app::modules::projects::model::{ProjectWithRecords, Project};
@@ -26,7 +26,7 @@ pub async fn get_show_last_records_admin(db: &Db, _admin: UserInClaims, id: i32)
 
     match project {
         Ok(project) => {
-            let records = records_repository::get_last_of_every_user(&db).await;
+            let records = records_repository::get_last_of_every_user(db).await;
             
             let records = match records {
                 Ok(records) => Some(records),

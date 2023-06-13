@@ -1,13 +1,13 @@
 use rocket::http::Status;
 use rocket::serde::json::Json;
 
-use crate::app::modules::records::model::{NewRecord, Record};
-use crate::app::modules::project_records::model::NewProjectRecord;
+use crate::database::connection::Db;
 
-use crate::app::providers::interfaces::helpers::claims::UserInClaims;
-use crate::config::database::Db;
+use crate::app::providers::services::claims::UserInClaims;
 
 use crate::app::modules::projects::model::{Project, NewProject};
+use crate::app::modules::records::model::{NewRecord, Record};
+use crate::app::modules::project_records::model::NewProjectRecord;
 
 use crate::app::modules::projects::services::repository as projects_repository;
 use crate::app::modules::records::services::repository as records_repository;
