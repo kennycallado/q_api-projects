@@ -20,6 +20,7 @@ pub fn routes() -> Vec<rocket::Route> {
         get_show_record,
         get_show_record_none,
         get_show_records_last,
+        get_show_records_last_none,
         get_show_user,
         get_show_user_none,
         get_show_user_new,
@@ -122,6 +123,11 @@ pub async fn get_show_records_last(
             Err(Status::BadRequest)
         }
     }
+}
+
+#[get("/<_id>/record/lasts", rank = 2)]
+pub async fn get_show_records_last_none(_id: i32) -> Status {
+    Status::Unauthorized
 }
 
 #[get("/<id>/user/<user_id>", rank = 101)]

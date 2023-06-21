@@ -2,6 +2,7 @@ use diesel::prelude::*;
 
 use crate::database::connection::Db;
 use crate::database::schema::records;
+use crate::database::schema::project_records;
 
 use crate::app::modules::records::model::{NewRecord, Record};
 
@@ -72,12 +73,15 @@ pub async fn get_last_by_user_id(
     record
 }
 
-pub async fn get_last_of_every_user(db: &Db) -> Result<Vec<Record>, diesel::result::Error> {
+pub async fn get_last_of_every_user_by_project_id(db: &Db, id: i32) -> Result<Vec<Record>, diesel::result::Error> {
     let records = db
         .run(move |conn| {
             records::table
                 .distinct_on(records::user_id)
+                .inner_join(project_records::table)
+                .filter(project_records::project_id.eq(id))
                 .order((records::user_id, records::id.desc()))
+                .select(records::all_columns)
                 .load::<Record>(conn)
         })
         .await;

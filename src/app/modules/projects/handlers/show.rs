@@ -34,7 +34,7 @@ pub async fn get_show_last_records_admin(
 
     match project {
         Ok(project) => {
-            let records = records_repository::get_last_of_every_user(db).await;
+            let records = records_repository::get_last_of_every_user_by_project_id(db, id).await;
 
             let records = match records {
                 Ok(records) => Some(records),
