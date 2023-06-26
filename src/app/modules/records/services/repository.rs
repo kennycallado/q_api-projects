@@ -90,6 +90,17 @@ pub async fn get_last_of_every_user_by_project_id(db: &Db, id: i32) -> Result<Ve
 }
 
 pub async fn create(db: &Db, new_record: NewRecord) -> Result<Record, diesel::result::Error> {
+    // make default value {}
+    let record = match new_record.record {
+        Some(record) => record,
+        None => rocket::serde::json::json!({}),
+    };
+
+    let new_record = NewRecord {
+        user_id: new_record.user_id,
+        record: Some(record),
+    };
+
     let record = db
         .run(move |conn| {
             diesel::insert_into(records::table)
