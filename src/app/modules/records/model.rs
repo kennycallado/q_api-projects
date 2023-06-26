@@ -16,14 +16,14 @@ pub struct Record {
 #[serde(crate = "rocket::serde")]
 pub struct NewRecord {
     pub user_id: i32,
-    pub record: rocket::serde::json::Value,
+    pub record: Option<rocket::serde::json::Value>,
 }
 
 impl From<Record> for NewRecord {
     fn from(record: Record) -> Self {
         Self {
             user_id: record.user_id,
-            record: record.record,
+            record: Some(record.record),
         }
     }
 }

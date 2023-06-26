@@ -44,7 +44,7 @@ pub async fn get_show_user_new_admin(
         Ok(project) => {
             let new_record = NewRecord {
                 user_id,
-                record: rocket::serde::json::Value::String("{}".to_string()),
+                record: None,
             };
 
             match records_repository::create(&db, new_record).await {
