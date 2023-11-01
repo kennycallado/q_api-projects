@@ -7,8 +7,20 @@ use crate::app::modules::projects::model::{NewProject, Project};
 
 pub async fn get_all(db: &Db) -> Result<Vec<Project>, diesel::result::Error> {
     let projects = db
-        .run(move |conn| projects::table.load::<Project>(conn))
+        .run(move |conn| projects::table.load::<(i32, String, Vec<Option<String>>)>(conn))
         .await?;
+
+    let projects = projects
+        .into_iter()
+        .map(|(id, name, keys)| Project {
+            id,
+            name,
+            keys: Some(keys
+                .into_iter()
+                .filter_map(|key| key)
+                .collect::<Vec<String>>()),
+        })
+        .collect::<Vec<Project>>();
 
     Ok(projects)
 }
@@ -18,9 +30,15 @@ pub async fn get_by_id(db: &Db, id: i32) -> Result<Project, diesel::result::Erro
         .run(move |conn| {
             projects::table
                 .filter(projects::id.eq(id))
-                .first::<Project>(conn)
+                .first::<(i32, String, Vec<Option<String>>)>(conn)
         })
         .await?;
+
+    let project = Project {
+        id: project.0,
+        name: project.1,
+        keys: Some(project.2.into_iter().filter_map(|key| key).collect::<Vec<String>>()),
+    };
 
     Ok(project)
 }
@@ -33,9 +51,15 @@ pub async fn create(
         .run(move |conn| {
             diesel::insert_into(projects::table)
                 .values(&new_project)
-                .get_result::<Project>(conn)
+                .get_result::<(i32, String, Vec<Option<String>>)>(conn)
         })
         .await?;
+
+    let project = Project {
+        id: project.0,
+        name: project.1,
+        keys: Some(project.2.into_iter().filter_map(|key| key).collect::<Vec<String>>()),
+    };
 
     Ok(project)
 }
@@ -50,9 +74,15 @@ pub async fn update(
             diesel::update(projects::table)
                 .filter(projects::id.eq(id))
                 .set(&new_project)
-                .get_result::<Project>(conn)
+                .get_result::<(i32, String, Vec<Option<String>>)>(conn)
         })
         .await?;
+
+    let project = Project {
+        id: project.0,
+        name: project.1,
+        keys: Some(project.2.into_iter().filter_map(|key| key).collect::<Vec<String>>()),
+    };
 
     Ok(project)
 }
