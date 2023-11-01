@@ -33,7 +33,7 @@ Accept: application/json
 
 # {{{ projects
 
-GET http://localhost:8000/api/v1/project
+GET http://localhost:8000/api/v1/project/
 Accept: application/json
 Authorization: Bearer 
 
