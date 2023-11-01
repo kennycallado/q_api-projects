@@ -1,4 +1,4 @@
 mod modules;
-mod providers;
+pub mod providers;
 mod routing;
 pub mod server;
