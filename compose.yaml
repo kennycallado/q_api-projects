@@ -312,7 +312,6 @@ services:
       - ROCKET_PROJECT_URL="http://projects_api:8000/api/v1/project/"
     depends_on:
       - checker_api
-      - projects_api
       - users_api
 
   logics-cron_api:
@@ -339,7 +338,6 @@ services:
       - ROCKET_PROJECT_URL="http://projects_api:8000/api/v1/project/"
     depends_on:
       - checker_api
-      - projects_api
       - users_api
   # }}}
 # }}}
