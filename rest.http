@@ -53,7 +53,7 @@ GET http://localhost:8000/api/v1/project/1/user/1
 Accept: application/json
 Authorization: Bearer 
 
-GET http://localhost:8000/api/v1/project/1/user/1/new
+GET http://localhost:8000/api/v1/project/1/user/2/new
 Accept: application/json
 Authorization: Bearer 
 

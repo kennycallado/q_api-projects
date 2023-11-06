@@ -76,7 +76,8 @@ pub async fn get_last_by_user_id(
     db: &Db,
     user_id: i32,
 ) -> Result<Record, sqlx::Error> {
-    let record = sqlx::query_as!(Record, "SELECT * FROM records WHERE user_id = $1 ORDER BY user_id DESC LIMIT 1", user_id)
+    let record = sqlx::query_as!(Record,
+        "SELECT * FROM records WHERE user_id = $1 ORDER BY user_id DESC LIMIT 1", user_id)
         .fetch_one(&db.0)
         .await?;
 
@@ -139,10 +140,15 @@ pub async fn create(db: &Db, new_record: NewRecord) -> Result<Record, sqlx::Erro
     //     })
     //     .await;
 
+    let record = match new_record.record {
+        Some(record) => record,
+        None => rocket::serde::json::json!({}),
+    };
+
     let record = sqlx::query_as!(
         Record,
         "INSERT INTO records (user_id, record) VALUES ($1, $2) RETURNING *",
-        new_record.user_id, new_record.record)
+        new_record.user_id, record)
         .fetch_one(&db.0)
         .await?;
 

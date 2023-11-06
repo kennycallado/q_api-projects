@@ -56,13 +56,22 @@ pub async fn get_show_user_new_admin(
 
                     match pr_repository::create(&db, new_project_record).await {
                         Ok(_) => Ok(Json(project)),
-                        Err(_) => Err(Status::InternalServerError),
+                        Err(e) => {
+                            println!("Error 1: {}", e);
+                            Err(Status::InternalServerError)
+                        },
                     }
                 }
-                Err(_) => Err(Status::InternalServerError),
+                Err(e) => {
+                    println!("Error 2: {}", e);
+                    Err(Status::InternalServerError)
+                },
             }
         }
-        Err(_) => Err(Status::InternalServerError),
+        Err(e) => {
+            println!("Error 3: {}", e);
+            Err(Status::InternalServerError)
+        },
     }
 }
 
