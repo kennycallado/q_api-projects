@@ -1,4 +1,7 @@
+#![allow(unused_imports)]
+
 mod app;
+mod config;
 mod database;
 
 #[cfg(test)]
