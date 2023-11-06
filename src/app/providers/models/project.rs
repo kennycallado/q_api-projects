@@ -13,7 +13,7 @@ use crate::app::providers::services::fetch::Fetch;
 pub struct PubProject {
     pub id: i32,
     pub name: String,
-    pub keys: Vec<Option<String>>,
+    pub keys: Option<Vec<String>>,
 }
 
 #[cfg(feature = "fetch")]
@@ -101,6 +101,6 @@ impl PubProject {
 pub struct PubProjectWithRecords {
     pub id: i32,
     pub name: String,
-    pub keys: Vec<Option<String>>,
+    pub keys: Option<Vec<String>>,
     pub records: Option<Vec<PubRecord>>,
 }

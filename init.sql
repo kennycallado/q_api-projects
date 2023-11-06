@@ -8,5 +8,5 @@ CREATE DATABASE resources;
 CREATE DATABASE papers;
 -- CREATE DATABASE 'logics';
 -- CREATE DATABASE 'logicscron';
-CREATE DATABASE projects;
+-- CREATE DATABASE projects;
 CREATE DATABASE cron;

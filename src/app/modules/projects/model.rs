@@ -9,7 +9,7 @@ use crate::app::modules::records::model::Record;
 pub struct Project {
     pub id: i32,
     pub name: String,
-    pub keys: Vec<Option<String>>,
+    pub keys: Option<Vec<String>>,
 }
 
 #[derive(Debug, Clone, Deserialize, Serialize, Insertable, AsChangeset)]
@@ -17,14 +17,14 @@ pub struct Project {
 #[serde(crate = "rocket::serde")]
 pub struct NewProject {
     pub name: String,
-    pub keys: Vec<String>,
+    pub keys: Option<Vec<String>>,
 }
 
 impl From<Project> for NewProject {
     fn from(project: Project) -> Self {
         NewProject {
             name: project.name,
-            keys: project.keys.into_iter().filter_map(|k| k).collect(),
+            keys: project.keys,
         }
     }
 }
@@ -34,7 +34,7 @@ impl From<Project> for NewProject {
 pub struct ProjectWithRecords {
     pub id: i32,
     pub name: String,
-    pub keys: Vec<Option<String>>,
+    pub keys: Option<Vec<String>>,
     pub records: Option<Vec<Record>>,
 }
 
