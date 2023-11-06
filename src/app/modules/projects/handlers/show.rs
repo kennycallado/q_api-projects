@@ -69,7 +69,7 @@ pub async fn get_show_records_admin(
                 Ok(project_records) => {
                     let ids = project_records
                         .iter()
-                        .map(|pr| pr.records_id)
+                        .map(|pr| pr.record_id)
                         .collect::<Vec<i32>>();
                     let record = records_repository::get_by_multiple_ids(&db, ids).await;
 
@@ -110,7 +110,7 @@ pub async fn get_show_user_admin(
                 Ok(project_records) => {
                     let ids = project_records
                         .iter()
-                        .map(|pr| pr.records_id)
+                        .map(|pr| pr.record_id)
                         .collect::<Vec<i32>>();
                     let record = records_repository::get_by_multiple_ids(&db, ids).await;
 

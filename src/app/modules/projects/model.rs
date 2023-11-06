@@ -1,10 +1,18 @@
 use serde::{Deserialize, Serialize};
 
+#[cfg(feature = "db_diesel")]
 use crate::database::schema::projects;
+
+#[cfg(feature = "db_sqlx")]
+use rocket_db_pools::sqlx::FromRow;
+#[cfg(feature = "db_sqlx")]
+use rocket_db_pools::sqlx;
 
 use crate::app::modules::records::model::Record;
 
-#[derive(Debug, Clone, Deserialize, Serialize, Queryable)]
+#[cfg_attr(feature = "db_diesel", derive(Queryable, Identifiable))]
+#[cfg_attr(feature = "db_sqlx", derive(FromRow))]
+#[derive(Debug, Clone, Deserialize, Serialize)]
 #[serde(crate = "rocket::serde")]
 pub struct Project {
     pub id: i32,
@@ -12,8 +20,9 @@ pub struct Project {
     pub keys: Option<Vec<String>>,
 }
 
-#[derive(Debug, Clone, Deserialize, Serialize, Insertable, AsChangeset)]
-#[diesel(table_name = projects)]
+#[cfg_attr(feature = "db_diesel", derive(Insertable, AsChangeset))]
+#[cfg_attr(feature = "db_diesel", diesel(table_name = projects))]
+#[derive(Debug, Clone, Deserialize, Serialize)]
 #[serde(crate = "rocket::serde")]
 pub struct NewProject {
     pub name: String,
